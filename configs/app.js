@@ -4,7 +4,7 @@ import express from 'express'
 import morgan from 'morgan'
 import helmet from 'helmet'
 import cors from 'cors'
-import authRoutes from '../src/auth/auth.routes'
+import authRoutes from '../src/auth/auth.routes.js'
 
 const configs = (app)=>{
     app.use(express.json())

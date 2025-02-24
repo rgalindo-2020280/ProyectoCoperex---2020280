@@ -1,6 +1,6 @@
-import User from '../user/user.model'
-import { checkPassword, encrypt } from '../../utils/encrypt'
-import { generateJwt } from '../../utils/jwt'
+import User from '../user/user.model.js'
+import { checkPassword, encrypt } from '../../utils/encrypt.js'
+import { generateJwt } from '../../utils/jwt.js'
 
 export const register = async(req, res)=>{
     try{
