@@ -4,6 +4,7 @@ import express from 'express'
 import morgan from 'morgan'
 import helmet from 'helmet'
 import cors from 'cors'
+import authRoutes from '../src/auth/auth.routes'
 
 const configs = (app)=>{
     app.use(express.json())
@@ -14,7 +15,7 @@ const configs = (app)=>{
 }
 
 const routes = (app)=>{
-
+    app.use(authRoutes)
 }
 
 export const initServer = async()=>{
