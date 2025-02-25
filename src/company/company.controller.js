@@ -107,3 +107,60 @@ export const updateCompany = async (req, res) => {
         })
     }
 }
+
+export const getCompaniesAZ = async (req, res) => {
+    try {
+        const { category, yearsInBusiness } = req.query
+        const filter = {}
+        if (category) {
+            filter.category = category
+        }
+        if (yearsInBusiness) {
+            filter.yearsInBusiness = { $gte: yearsInBusiness }
+        }
+        const companies = await Company.find(filter).populate('category', 'name description')
+        const sortedCompaniesAZ = companies.sort((a, b) => {
+            return a.name.localeCompare(b.name)
+        })
+
+        return res.send({
+            success: true,
+            companies: sortedCompaniesAZ
+        })
+    } catch (error) {
+        console.error(error)
+        return res.status(500).send({
+            success: false,
+            message: "Error retrieving companies",
+            error: error.message
+        })
+    }
+}
+
+export const getCompaniesZA = async (req, res) => {
+    try {
+        const { category, yearsInBusiness } = req.query
+        const filter = {}
+        if (category) {
+            filter.category = category
+        }
+        if (yearsInBusiness) {
+            filter.yearsInBusiness = { $gte: yearsInBusiness }
+        }
+        const companies = await Company.find(filter).populate('category', 'name description')
+        const sortedCompaniesZA = companies.sort((a, b) => {
+            return b.name.localeCompare(a.name)
+        })
+        return res.send({
+            success: true,
+            companies: sortedCompaniesZA
+        })
+    } catch (error) {
+        console.error(error)
+        return res.status(500).send({
+            success: false,
+            message: "Error retrieving companies",
+            error: error.message
+        })
+    }
+}
