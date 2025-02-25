@@ -8,13 +8,13 @@ const companySchema = new Schema(
             unique: true,
             maxLength: [100, "Cannot exceed 100 characters"]
         },
-        companySize: {
+        impactLevel: {
             type: String,
             required: [true, "Impact level is required"],
             enum: ["Low", "Medium", "High"],
             default: "Medium"
         },
-        yearsInService: {
+        yearsInBusiness: {
             type: Number,
             required: [true, "Years in business is required"],
             min: [0, "Years cannot be negative"]
