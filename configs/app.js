@@ -17,6 +17,7 @@ const configs = (app)=>{
 
 const routes = (app)=>{
     app.use(authRoutes)
+    app.use('/v1/category', categoryRoutes)
 }
 
 export const initServer = async()=>{

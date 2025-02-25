@@ -1,19 +1,53 @@
 import Category from "./category.model.js"
+import Company from "../company/company.model.js"
 
 export const addCategory = async (req, res) => {
     try {
-        const { name, description } = req.body
+        const { name, description, companyIds } = req.body
+        if (!name) {
+            return res.status(400).send({
+                success: false,
+                message: "Category name is required"
+            })
+        }
         const existingCategory = await Category.findOne({ name })
         if (existingCategory) {
-            return res.status(400).send("Category already exists")
+            return res.status(400).send({
+                success: false,
+                message: "Category already exists"
+            })
         }
         const newCategory = new Category({
             name,
-            description
+            description: description || "",
+            companies: []
         })
         await newCategory.save()
-        res.status(201).send("Category added successfully")
+        if (companyIds && companyIds.length > 0) {
+            await Company.updateMany(
+                { _id: { $in: companyIds } },
+                { category: newCategory._id }
+            )
+            newCategory.companies = companyIds
+            await newCategory.save()
+        }
+        const populatedCategory = await Category.findById(newCategory._id)
+            .populate({
+                path: 'companies',
+                select: 'name impactLevel yearsInBusiness -_id'
+            })
+        return res.status(201).send({
+            success: true,
+            message: "Category added successfully",
+            category: populatedCategory
+        })
+
     } catch (error) {
-        res.status(500).send("Error adding category")
+        return res.status(500).send({
+            success: false,
+            message: "Error adding category",
+            error: error.message
+        })
     }
 }
+
