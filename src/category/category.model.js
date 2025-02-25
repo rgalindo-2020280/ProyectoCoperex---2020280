@@ -11,7 +11,11 @@ const categorySchema = new Schema(
         description: {
             type: String,
             maxLength: [250, "Cannot exceed 250 characters"]
-        }
+        },
+        companies: [{
+            type: Schema.Types.ObjectId,
+            ref: "Company"
+        }]
     }
 )
 
