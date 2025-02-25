@@ -1,5 +1,5 @@
-import Company from "../models/company.js"
-import Category from "../models/category.js"
+import Company from "./company.model.js"
+import Category from "../category/category.model.js"
 
 export const addCompany = async (req, res) => {
     try {
