@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import { 
     addCompany, 
+    getByYears, 
     getCompaniesAZ, 
     getCompaniesZA,
     updateCompany
@@ -32,6 +33,12 @@ api.get(
     '/getZ-A',
     [validateJwt],
     getCompaniesZA
+)
+
+api.get(
+    '/getByYears',
+    [validateJwt],
+    getByYears
 )
 
 export default api
