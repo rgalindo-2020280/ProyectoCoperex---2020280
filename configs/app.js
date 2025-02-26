@@ -7,6 +7,7 @@ import cors from 'cors'
 import authRoutes from '../src/auth/auth.routes.js'
 import categoryRoutes from '../src/category/category.routes.js'
 import companyRoutes from '../src/company/company.routes.js'
+import reportRoutes from '../src/report/report.routes.js'
 
 const configs = (app)=>{
     app.use(express.json())
@@ -20,6 +21,7 @@ const routes = (app)=>{
     app.use(authRoutes)
     app.use('/v1/category', categoryRoutes)
     app.use('/v1/company', companyRoutes)
+    app.use('/v1/report', reportRoutes)
 }
 
 export const initServer = async()=>{
