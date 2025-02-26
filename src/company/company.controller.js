@@ -164,3 +164,39 @@ export const getCompaniesZA = async (req, res) => {
         })
     }
 }
+
+export const getByYears = async (req, res) => {
+    try {
+        const { yearsInBusiness } = req.body
+        if (!yearsInBusiness || yearsInBusiness < 1) {
+            return res.status(400).send({
+                success: false,
+                message: "Please provide a valid number of years in business to filter"
+            })
+        }
+        const companies = await Company.find({
+            yearsInBusiness: { $gte: yearsInBusiness }
+        }).populate('category', 'name description')
+        for (let i = 0; i < companies.length; i++) {
+            for (let j = i + 1; j < companies.length; j++) {
+                if (companies[i].yearsInBusiness > companies[j].yearsInBusiness) {
+                    const temp = companies[i]
+                    companies[i] = companies[j]
+                    companies[j] = temp
+                }
+            }
+        }
+        return res.send({
+            success: true,
+            companies
+        })
+    } catch (error) {
+        console.error(error)
+        return res.status(500).send({
+            success: false,
+            message: "Error retrieving companies",
+            error: error.message
+        })
+    }
+}
+
