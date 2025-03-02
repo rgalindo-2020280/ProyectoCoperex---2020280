@@ -1,6 +1,8 @@
-import { body } from 'express-validator'
+import { body, param } from 'express-validator'
 import { validateErrorWithoutImg } from './validate.error.js'
 import { existUsername, existEmail, objectIdValid } from './db.validators.js'
+import Company from '../src/company/company.model.js'
+import Category from '../src/category/category.model.js'
 
 export const registerValidator = [
     body('name', 'Name cannot be empty')
@@ -66,5 +68,75 @@ export const categoryValidator = [
                 throw new Error('Some companies do not exist')
             }
         }
-    )
+    ),
+    validateErrorWithoutImg
+]
+
+export const addCompanyValidator = [
+    body('name', 'Company name cannot be empty')
+        .notEmpty()
+        .isString().withMessage('Company name must be a valid string')
+        .isLength({ max: 100 }).withMessage('Company name must not exceed 100 characters')
+        .custom(async (name) => {
+            const existingCompany = await Company.findOne({ name })
+            if (existingCompany) {
+                throw new Error('Company name already exists')
+            }
+            return true
+        }),
+    body('impactLevel', 'Impact level cannot be empty')
+        .notEmpty()
+        .isIn(['Low', 'Medium', 'High']).withMessage('Impact level must be one of: Low, Medium, High'),
+    body('yearsInBusiness', 'Years of experience cannot be empty')
+        .notEmpty()
+        .isInt({ min: 0 }).withMessage('Years in business must be a positive integer'),
+    body('category', 'Category cannot be empty')
+        .notEmpty()
+        .isMongoId().withMessage('Category must be a valid MongoDB ObjectId')
+        .custom(async (categoryId) => {
+            const existingCategory = await Category.findById(categoryId)
+            if (!existingCategory) {
+                throw new Error('Category not found')
+            }
+            return true
+        }),
+    validateErrorWithoutImg
+]
+
+export const updateCompanyValidator = [
+    param('id', 'Invalid company ID')
+        .isMongoId().withMessage('Invalid company ID'),
+    body('name', 'Name cannot be updated empty')
+        .optional()
+        .isString().withMessage('Company name must be a valid string')
+        .isLength({ max: 100 }).withMessage('Company name must not exceed 100 characters')
+        .custom(async (name, { req }) => {
+            const { id } = req.params
+            if (name) {
+                const existingCompany = await Company.findOne({ name, _id: { $ne: id } })
+                if (existingCompany) {
+                    throw new Error('Company name already exists')
+                }
+            }
+            return true
+        }),
+    body('impactLevel', 'Impact level must be one of: Low, Medium, High')
+        .optional()
+        .isIn(['Low', 'Medium', 'High']).withMessage('Impact level must be one of: Low, Medium, High'),
+    body('yearsInBusiness', 'Years in business must be a positive integer')
+        .optional()
+        .isInt({ min: 0 }).withMessage('Years in business must be a positive integer'),
+    body('category')
+        .optional()
+        .isMongoId().withMessage('Category must be a valid MongoDB ObjectId')
+        .custom(async (categoryId) => {
+            if (categoryId) {
+                const existingCategory = await Category.findById(categoryId)
+                if (!existingCategory) {
+                    throw new Error('Category not found')
+                }
+            }
+            return true
+        }),
+    validateErrorWithoutImg
 ]
