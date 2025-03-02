@@ -24,27 +24,20 @@ export const generateReport = async (req, res) => {
             workbook.sheet(0).cell(`E${i + 2}`).value(company.category ? company.category.name : 'N/A')
         }
 
+        const fileName = `ReportCompany_${Date.now()}.xlsx`
+
         const reportFolderPath = path.join(process.cwd(), 'src', 'report', 'Reporte')
         if (!fs.existsSync(reportFolderPath)) {
             fs.mkdirSync(reportFolderPath, { recursive: true })
         }
-
-        const fileName = 'ReportCompany.xlsx'
+        
         const filePath = path.join(reportFolderPath, fileName)
-
-        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-        res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`)
 
         await workbook.toFileAsync(filePath)
 
-        res.sendFile(filePath, (err) => {
-            if (err) {
-                console.error("Error sending file:", err)
-                res.status(500).send({
-                    success: false,
-                    message: "Error sending the report file"
-                })
-            }
+        return res.status(200).send({
+            success: true,
+            message: `Report generated successfully! The file is saved as ${fileName}`
         })
 
     } catch (error) {
