@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import { 
-    addCategory
+    addCategory,
+    getAllCategories
 } from './category.controller.js'
 import { validateJwt} from '../../middlewares/validate.jwt.js'
 import { categoryValidator } from '../../helpers/validator.js'
@@ -13,6 +14,12 @@ api.post(
     [validateJwt],
     [categoryValidator],
     addCategory
+)
+
+api.get(
+    '/getCategories',
+    [validateJwt],
+    getAllCategories
 )
 
 export default api
