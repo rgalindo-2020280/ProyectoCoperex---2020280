@@ -51,3 +51,29 @@ export const addCategory = async (req, res) => {
     }
 }
 
+
+export const getAllCategories = async (req, res) => {
+    try {
+        const categories = await Category.find().populate({
+            path: 'companies',
+            select: 'name impactLevel yearsInBusiness -_id'
+        })
+        if (!categories || categories.length === 0) {
+            return res.status(404).send({
+                success: false,
+                message: "No categories found"
+            })
+        }
+        return res.status(200).send({
+            success: true,
+            categories
+        })
+    } catch (error) {
+        console.error(error)
+        return res.status(500).send({
+            success: false,
+            message: "Error fetching categories",
+            error: error.message
+        })
+    }
+}
